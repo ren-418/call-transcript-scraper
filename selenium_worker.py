@@ -13,7 +13,6 @@ import concurrent.futures
 
 JOBS_DIR = 'jobs'
 RESULTS_DIR = 'results'
-CHROME_PROFILE_PATH = r"C:\Users\Dimple\AppData\Local\Google\Chrome\User Data\Profile 33"
 CHROMEDRIVER_PATH = os.path.join(os.getcwd(), 'chromedriver-win64', 'chromedriver.exe')
 
 print_lock = threading.Lock()
@@ -131,7 +130,7 @@ def scrape_transcript(job):
     fathom_link = job['fathom_link']
     safe_print(f'[{job_id}] ▶️ Processing job: {job_id} | {closer_name} | {fathom_link}')
     options = Options()
-    options.add_argument(f"user-data-dir={CHROME_PROFILE_PATH}")
+    # options.add_argument(f"user-data-dir={CHROME_PROFILE_PATH}")
     options.add_experimental_option("detach", True)
     service = Service(CHROMEDRIVER_PATH)
     driver = webdriver.Chrome(service=service, options=options)
@@ -211,7 +210,7 @@ def main():
             jobs = [f for f in os.listdir(JOBS_DIR) if f.endswith('.json')]
             if jobs and driver is None:
                 options = Options()
-                options.add_argument(f"user-data-dir={CHROME_PROFILE_PATH}")
+                # options.add_argument(f"user-data-dir={CHROME_PROFILE_PATH}")
                 options.add_experimental_option("detach", True)
                 # options.add_argument("--headless=new")  # Uncomment to run headless if your workflow supports it
                 service = Service(CHROMEDRIVER_PATH)

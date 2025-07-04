@@ -6,6 +6,7 @@ import json
 import os
 import uuid
 from selenium_worker import scrape_transcript
+import base64
 
 app = FastAPI()
 
@@ -15,8 +16,16 @@ class CallData(BaseModel):
     date_of_call: str
     fathom_link: str
 
+# Example FastAPI
+@app.get("/ping")
+def ping():
+    print("call recevied")
+    return {"status": "ok"}
+
+
 @app.post("/webhook")
 async def handle_webhook(request: Request):
+    print("call recevied")
     payload = await request.json()
     try:
         data = payload["data"]
@@ -35,13 +44,17 @@ async def handle_webhook(request: Request):
         "fathom_link": fathom_link
     }
     result = scrape_transcript(job)
+    transcript_text = result["transcript_text"]
+    if transcript_text is None:
+        transcript_text = ""
+    transcript_text_b64 = base64.b64encode(transcript_text.encode("utf-8")).decode("utf-8")
     response = {
         "closer_name": result["closer_name"],
         "closer_email": result["closer_email"],
-        "transcript_text": result["transcript_text"],
+        "transcript_text": transcript_text_b64,
         "date_of_call": result["date_of_call"]
     }
-    print("result", result)
+    print("result", response)
     if result.get("error"):
         response["error"] = result["error"]
     return response
